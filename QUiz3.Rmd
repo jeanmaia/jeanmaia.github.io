@@ -1,0 +1,19 @@
+---
+title: "Quiz3"
+output: html_document
+author: "Jean Carlos Maia"
+date: 2017-07-05
+---
+
+## Exploring Diamonds Dataset
+
+
+```{r message=FALSE, warning=FALSE}
+
+library(plotly)
+set.seed(100)
+d <- diamonds[sample(nrow(diamonds), 1000), ]
+plot_ly(d, x = ~carat, y = ~price, color = ~carat,
+        size = ~carat, text = ~paste("Clarity: ", clarity))
+
+```
