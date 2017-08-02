@@ -1,5 +1,5 @@
 ---
-title: "Comportamento audiência - Estudio C"
+title: "Comportamento Audiência - Estudio C"
 author: "Jean Carlos Maia"
 date: "`r Sys.Date()`"
 output:
