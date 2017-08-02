@@ -360,7 +360,7 @@ for (i in 1:length(dflist)) {
 
 numberSlopes <- compileSlopes[order(compileSlopes$ParametroSlope),]
 
-numberSlopes<- data.frame('FatordeCrescimento'= numberSlopes$ParametroSlope , 'Data'= compileSlopes$Data)
+numberSlopes<- data.frame('FatordeCrescimento'= compileSlopes$ParametroSlope , 'Data'= compileSlopes$Data)
 knitr::kable(numberSlopes)
 ```
 
