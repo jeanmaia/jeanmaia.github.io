@@ -1,0 +1,562 @@
+---
+title: "Comportamento audiência - Estudio C"
+author: "Jean Carlos Maia"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+
+---
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+
+library(rJava)
+library(XLConnect)
+library(ggplot2)
+wb = loadWorkbook("/home/jean/Documentos/ExploracaoDeDados/MeetingAnaRaquel/minutoNew123.xlsx")
+```
+
+```{r warning=FALSE, echo=FALSE}
+
+dates <- list('02/01/2016', '09/01/2016', '23/01/2016', '06/02/2016', '13/02/2016',
+               '20/02/2016', '27/02/2016', '12/03/2016', '19/03/2016', '02/04/2016', 
+               '09/04/2016', '30/04/2016', '07/05/2016', '21/05/2016', '04/06/2016',
+               '18/06/2016', '25/06/2016', '23/07/2016', '03/09/2016', '10/09/2016', 
+               '24/09/2016', '08/10/2016', '22/10/2016', '05/11/2016', '26/11/2016', 
+               '17/12/2016', '24/12/2016', '07/01/2017', '21/01/2017', '04/02/2017',
+               '18/02/2017', '04/03/2017', '18/03/2017', '08/04/2017', '22/04/2017', 
+               '06/05/2017', '20/05/2017', '17/06/2017', '08/07/2017', '22/07/2017')
+```
+O objetivo é explorar a relação Tag - Resultado Ibope
+
+Vamos analisar o comportamento da `Audiência Individual` ao longo de 2016 e 2017  
+
+## Gráficos
+
+Abaixo segue a relação com todos os gráficos comportamentais.  
+
+
+```{r warning=FALSE, echo=FALSE }
+#### Load all 
+#1
+V02_01_2016 <- readWorksheet(wb, sheet = '02_01_2016', header = TRUE)
+V09_01_2016 <- readWorksheet(wb, sheet = '09_01_2016', header = TRUE)
+V23_01_2016 <- readWorksheet(wb, sheet = '23_01_2016', header = TRUE)
+V06_02_2016 <- readWorksheet(wb, sheet = '06_02_2016', header = TRUE)
+
+#2
+V13_02_2016 <- readWorksheet(wb, sheet = '13_02_2016', header = TRUE)
+V20_02_2016 <- readWorksheet(wb, sheet = '20_02_2016', header = TRUE)
+V27_02_2016 <- readWorksheet(wb, sheet = '27_02_2016', header = TRUE)
+V12_03_2016 <- readWorksheet(wb, sheet = '12_03_2016', header = TRUE)
+
+#3
+V19_03_2016 <- readWorksheet(wb, sheet = '19_03_2016', header = TRUE)
+V02_04_2016 <- readWorksheet(wb, sheet = '02_04_2016', header = TRUE)
+V09_04_2016 <- readWorksheet(wb, sheet = '09_04_2016', header = TRUE)
+V30_04_2016 <- readWorksheet(wb, sheet = '30_04_2016', header = TRUE)
+
+#4
+V07_05_2016 <- readWorksheet(wb, sheet = '07_05_2016', header = TRUE)
+V21_05_2016 <- readWorksheet(wb, sheet = '21_05_2016', header = TRUE)
+V04_06_2016 <- readWorksheet(wb, sheet = '04_06_2016', header = TRUE)
+V18_06_2016 <- readWorksheet(wb, sheet = '18_06_2016', header = TRUE)
+
+#5
+V25_06_2016 <- readWorksheet(wb, sheet = '25_06_2016', header = TRUE)
+V23_07_2016 <- readWorksheet(wb, sheet = '23_07_2016', header = TRUE)
+V03_09_2016 <- readWorksheet(wb, sheet = '03_09_2016', header = TRUE)
+V10_09_2016 <- readWorksheet(wb, sheet = '10_09_2016', header = TRUE)
+
+#6
+V24_09_2016 <- readWorksheet(wb, sheet = '24_09_2016', header = TRUE)
+V08_10_2016 <- readWorksheet(wb, sheet = '08_10_2016', header = TRUE)
+V22_10_2016 <- readWorksheet(wb, sheet = '22_10_2016', header = TRUE)
+V05_11_2016 <- readWorksheet(wb, sheet = '05_11_2016', header = TRUE)
+
+#7
+V26_11_2016 <- readWorksheet(wb, sheet = '26_11_2016', header = TRUE)
+V17_12_2016 <- readWorksheet(wb, sheet = '17_12_2016', header = TRUE)
+V24_12_2016 <- readWorksheet(wb, sheet = '24_12_2016', header = TRUE)
+V07_01_2017 <- readWorksheet(wb, sheet = '07_01_2017', header = TRUE)
+
+#8
+V21_01_2017 <- readWorksheet(wb, sheet = '21_01_2017', header = TRUE)
+V04_02_2017 <- readWorksheet(wb, sheet = '04_02_2017', header = TRUE)
+V18_02_2017 <- readWorksheet(wb, sheet = '18_02_2017', header = TRUE)
+V04_03_2017 <- readWorksheet(wb, sheet = '04_03_2017', header = TRUE)
+
+#9
+V18_03_2017 <- readWorksheet(wb, sheet = '18_03_2017', header = TRUE)
+V08_04_2017 <- readWorksheet(wb, sheet = '08_04_2017', header = TRUE)
+V22_04_2017 <- readWorksheet(wb, sheet = '22_04_2017', header = TRUE)
+V06_05_2017 <- readWorksheet(wb, sheet = '06_05_2017', header = TRUE)
+
+#10
+V20_05_2017 <- readWorksheet(wb, sheet = '20_05_2017', header = TRUE)
+V17_06_2017 <- readWorksheet(wb, sheet = '17_06_2017', header = TRUE)
+V08_07_2017 <- readWorksheet(wb, sheet = '08_07_2017', header = TRUE)
+V22_07_2017 <- readWorksheet(wb, sheet = '22_07_2017', header = TRUE)
+
+```
+
+
+```{r warning=FALSE, echo=FALSE}
+#1
+par(mfrow=c(3,4))
+
+plot(V02_01_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="02_01_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V04_02_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="04_02_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V23_01_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="23_01_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V06_02_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="06_02_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+#2
+#par(mfrow=c(1,4))
+
+plot(V13_02_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="13_02_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V20_02_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="20_02_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V17_06_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="17_06_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+
+plot(V08_07_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="08_07_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+#3
+#par(mfrow=c(1,4))
+
+plot(V19_03_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="19_03_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V02_04_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="02_04_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V09_04_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="09_04_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V30_04_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="30_04_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+```
+
+```{r warning=FALSE, echo=FALSE}
+#4
+par(mfrow=c(3,4))
+
+plot(V07_05_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="07_05_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V21_05_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="21_05_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V04_06_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="04_06_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V18_06_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="18_06_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+
+#5
+#par(mfrow=c(1,4))
+
+plot(V25_06_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="25_06_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V23_07_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="23_07_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V03_09_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="03_09_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V10_09_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="10_09_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+#6
+#par(mfrow=c(1,4))
+
+plot(V22_07_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="22_07_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+
+plot(V08_10_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="08_10_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V20_05_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="20_05_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V05_11_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="05_11_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+```
+
+```{r warning=FALSE, echo=FALSE}
+#7
+par(mfrow=c(3,4))
+
+plot(V26_11_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="26_11_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V17_12_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="17_12_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V24_12_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="24_12_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V07_01_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="07_01_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+
+#8
+#par(mfrow=c(1,4))
+
+plot(V23_01_2016$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="23_01_2016", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V18_02_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="18_02_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V04_03_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="04_03_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+#9
+#par(mfrow=c(1,4))
+
+plot(V18_03_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="18_03_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V08_04_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="08_04_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V22_04_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="22_04_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+plot(V06_05_2017$Total.Indivíduos, type="l", col='#31628D', ann=FALSE, lwd=2)
+title(main="06_05_2017", col.main='#31628D', font.main=8)
+title(xlab="Minutos", col.lab='#31628D')
+title(ylab="Audiência Individual", col.lab='#31628D')
+
+```
+
+Criação da métrica para quantificar o `comportamento diário`
+
+## Quantificando os gráficos
+
+Para esta análise foi implementada a métrica de `Fator de crescimento`. Ela é derivada de um padrão estatístico que possui esta descrição:
+
+Fator de crescimento relaciona as subidas e descidas, tempo e nível da inclinação. Com isto chega-se à métrica `Fator de crescimento`.
+
+As características desses número:
+
+1. O valor negativo implica em um comportamento descrito majoritariamente por quedas.
+2. O valor positivo implica em um comportamento descrito majoritariamente por subidas.
+3. Quanto maior o número, mais íngreme é este comportamento.
+
+* Esta métrica ignora ruídos.
+
+Na tabela abaixo temos a relação `Dia` e `Fator de Crescimento`:
+```{r, echo=FALSE}
+dflist <- list(V02_01_2016, V09_01_2016, V23_01_2016, V06_02_2016, V13_02_2016,
+               V20_02_2016, V27_02_2016, V12_03_2016, V19_03_2016, V02_04_2016, 
+               V09_04_2016, V30_04_2016, V07_05_2016, V21_05_2016, V04_06_2016,
+               V18_06_2016, V25_06_2016, V23_07_2016, V03_09_2016, V10_09_2016, 
+               V24_09_2016, V08_10_2016, V22_10_2016, V05_11_2016, V26_11_2016, 
+               V17_12_2016, V24_12_2016, V07_01_2017, V21_01_2017, V04_02_2017,
+               V18_02_2017, V04_03_2017, V18_03_2017, V08_04_2017, V22_04_2017, 
+               V06_05_2017, V20_05_2017, V17_06_2017, V08_07_2017, V22_07_2017)
+
+
+for (i in 1:length(dflist)) {
+  dflist[[i]]$minutos <- seq.int(nrow(dflist[[i]]));
+}
+
+compileSlopes <- NULL;
+
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ Total.Indivíduos, data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],Data=dates[[i]]) )
+}
+
+```
+
+
+```{r, echo=FALSE, results='asis'}
+
+numberSlopes <- compileSlopes[order(compileSlopes$ParametroSlope),]
+
+numberSlopes<- data.frame('FatordeCrescimento'= numberSlopes$ParametroSlope , 'Data'= compileSlopes$Data)
+knitr::kable(numberSlopes)
+```
+
+# Aproximadamente 85% dos dias apresentaram comportamento de queda.
+
+Vamos usar outra métrica para conferir se de fato, comportamento de queda caracteriza o resultado de audiência.
+
+## Valor de probabilidade.
+
+Aqui aplicamos uma nova métrica: pValue. Ela traduz a similaridade entre a compilação de todos resultados e uma data específica. Quanto maior o pValue, mais similar.
+
+Em outras palavras, o pValue nos mostra o dia que  `Melhor descreve o resultado geral do Estúdio C`. Podemos assim, derivar os dias que melhor representam o resultado total do Programa.
+
+Uma observação: O pValue mede a relação de padrão. Fazendo-a independente da métrica anterior: Fator de Crescimento.
+
+```{r, echo=FALSE, results='asis'}
+sumResults <- NULL;
+for (i in 1:length(dflist)) {
+  sumResults <- rbind(sumResults, data.frame(Resultados= dflist[[i]]$Total.Indivíduos ) )
+}
+
+compileSlopes <- NULL;
+pValues <- NULL;
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ Total.Indivíduos, data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],pvalue=t.test(sumResults$Resultados,dflist[[i]]$Total.Indivíduos ,paired=FALSE )$p.value, Data=dates[[i]]) )
+  
+}
+
+numberSlopes <- compileSlopes[order(-compileSlopes$pvalue ),]
+numberSlopes<- data.frame('Data'= numberSlopes$Data, 'FatordeCrescimento'= numberSlopes$ParametroSlope , 'PValue'= numberSlopes$pvalue )
+
+knitr::kable(head(numberSlopes,8) )
+```
+
+Vemos que os dias que melhor descrevem o comportamento do Estúdio C possuem Fator de Crescimento `negativo`.
+
+Então, o comportamento de queda caracteriza a audiência.
+
+# Conclusões
+
+1. Faz sentido continuar a atribuir o resultado do dia à tag. O comportamento é `padronizado`.
+2. Projetar estratégias diferentes de divulgação do conteúdo. `personalização`.
+3. Propostas diferenciadas de `interatividade`.
+
+
+# Anexo: Comportamento de outros targets
+## Avaliando os targets:
+`AS1217`, `AS2534`, `AS4049` e `Audiência Domiciliar`
+
+### AS1217
+
+
+```{r, echo=FALSE, results='asis'}
+dflist <- list(V02_01_2016, V09_01_2016, V23_01_2016, V06_02_2016, V13_02_2016,
+               V20_02_2016, V27_02_2016, V12_03_2016, V19_03_2016, V02_04_2016, 
+               V09_04_2016, V30_04_2016, V07_05_2016, V21_05_2016, V04_06_2016,
+               V18_06_2016, V25_06_2016, V23_07_2016, V03_09_2016, V10_09_2016, 
+               V24_09_2016, V08_10_2016, V22_10_2016, V05_11_2016, V26_11_2016, 
+               V17_12_2016, V24_12_2016, V07_01_2017, V21_01_2017, V04_02_2017,
+               V18_02_2017, V04_03_2017, V18_03_2017, V08_04_2017, V22_04_2017, 
+               V06_05_2017, V20_05_2017, V17_06_2017, V08_07_2017, V22_07_2017)
+
+dates <- list('02/01/2016', '09/01/2016', '23/01/2016', '06/02/2016', '13/02/2016',
+               '20/02/2016', '27/02/2016', '12/03/2016', '19/03/2016', '02/04/2016', 
+               '09/04/2016', '30/04/2016', '07/05/2016', '21/05/2016', '04/06/2016',
+               '18/06/2016', '25/06/2016', '23/07/2016', '03/09/2016', '10/09/2016', 
+               '24/09/2016', '08/10/2016', '22/10/2016', '05/11/2016', '26/11/2016', 
+               '17/12/2016', '24/12/2016', '07/01/2017', '21/01/2017', '04/02/2017',
+               '18/02/2017', '04/03/2017', '18/03/2017', '08/04/2017', '22/04/2017', 
+               '06/05/2017', '20/05/2017', '17/06/2017', '08/07/2017', '22/07/2017')
+
+for (i in 1:length(dflist)) {
+  dflist[[i]]$minutos <- seq.int(nrow(dflist[[i]]));
+}
+
+
+sumResults <- NULL;
+for (i in 1:length(dflist)) {
+  sumResults <- rbind(sumResults, data.frame(Resultados= dflist[[i]]$AS.ABCDE.12.17 ) )
+}
+
+compileSlopes <- NULL;
+pValues <- NULL;
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ AS.ABCDE.12.17, data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2],pvalue=t.test(sumResults$Resultados,dflist[[i]]$AS.ABCDE.12.17 ,paired=FALSE )$p.value, Data=dates[[i]]) )
+  
+}
+
+numberSlopes <- compileSlopes[order(-compileSlopes$pvalue ),]
+numberSlopes<- data.frame('Data'= numberSlopes$Data, 'FatordeCrescimento'= numberSlopes$ParametroSlope , 'PValue'= numberSlopes$pvalue )
+
+knitr::kable(head(numberSlopes,10) )
+
+```
+
+
+### AS2534
+
+```{r, echo=FALSE, results='asis'}
+sumResults <- NULL;
+for (i in 1:length(dflist)) {
+  #model <- lm(minutos ~ Total.Indivíduos, data=dflist[[i]]);
+  #compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],Data=dates[[i]]) )
+  sumResults <- rbind(sumResults, data.frame(Resultados= dflist[[i]]$AS.ABCDE.25.34 ) )
+}
+
+compileSlopes <- NULL;
+pValues <- NULL;
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ AS.ABCDE.25.34, data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],pvalue=t.test(sumResults$Resultados,dflist[[i]]$AS.ABCDE.25.34 ,paired=FALSE )$p.value, Data=dates[[i]]) )
+  
+}
+
+numberSlopes <- compileSlopes[order(-compileSlopes$pvalue ),]
+numberSlopes<- data.frame('Data'= numberSlopes$Data, 'FatordeCrescimento'= numberSlopes$ParametroSlope , 'PValue'= numberSlopes$pvalue )
+
+knitr::kable(head(numberSlopes,10) )
+
+```
+
+### AS3539
+
+```{r, echo=FALSE, results='asis'}
+sumResults <- NULL;
+for (i in 1:length(dflist)) {
+  #model <- lm(minutos ~ Total.Indivíduos, data=dflist[[i]]);
+  #compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],Data=dates[[i]]) )
+  sumResults <- rbind(sumResults, data.frame(Resultados= dflist[[i]]$AS.ABCDE.35.39.. ) )
+}
+
+compileSlopes <- NULL;
+pValues <- NULL;
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ AS.ABCDE.35.39.., data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],pvalue=t.test(sumResults$Resultados,dflist[[i]]$AS.ABCDE.35.39.. ,paired=FALSE )$p.value, Data=dates[[i]]) )
+  
+}
+
+numberSlopes <- compileSlopes[order(-compileSlopes$pvalue ),]
+numberSlopes<- data.frame('Data'= numberSlopes$Data, 'FatordeCrescimento'= numberSlopes$ParametroSlope , 'PValue'= numberSlopes$pvalue )
+
+knitr::kable(head(numberSlopes,10) )
+
+```
+
+
+### AS4049
+
+```{r, echo=FALSE, results='asis'}
+sumResults <- NULL;
+for (i in 1:length(dflist)) {
+  #model <- lm(minutos ~ Total.Indivíduos, data=dflist[[i]]);
+  #compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],Data=dates[[i]]) )
+  sumResults <- rbind(sumResults, data.frame(Resultados= dflist[[i]]$AS.ABCDE.40.49.. ) )
+}
+
+compileSlopes <- NULL;
+pValues <- NULL;
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ AS.ABCDE.40.49.., data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],pvalue=t.test(sumResults$Resultados,dflist[[i]]$AS.ABCDE.40.49.. ,paired=FALSE )$p.value, Data=dates[[i]]) )
+  
+}
+
+numberSlopes <- compileSlopes[order(-compileSlopes$pvalue ),]
+numberSlopes<- data.frame('Data'= numberSlopes$Data, 'FatordeCrescimento'= numberSlopes$ParametroSlope , 'PValue'= numberSlopes$pvalue )
+
+knitr::kable(head(numberSlopes,10) )
+
+```
+
+
+### Audiência Domiciliar
+
+```{r, echo=FALSE, results='asis'}
+sumResults <- NULL;
+for (i in 1:length(dflist)) {
+  sumResults <- rbind(sumResults, data.frame(Resultados= dflist[[i]]$Total.Domicílios ) )
+}
+
+compileSlopes <- NULL;
+pValues <- NULL;
+for (i in 1:length(dflist)) {
+  model <- lm(minutos ~ Total.Domicílios, data=dflist[[i]]);
+  compileSlopes <- rbind(compileSlopes, data.frame(ParametroSlope=summary(model)$coefficients[2,1],pvalue=t.test(sumResults$Resultados,dflist[[i]]$Total.Domicílios ,paired=FALSE )$p.value, Data=dates[[i]]) )
+  
+}
+
+numberSlopes <- compileSlopes[order(-compileSlopes$pvalue ),]
+numberSlopes<- data.frame('Data'= numberSlopes$Data, 'FatordeCrescimento'= numberSlopes$ParametroSlope , 'PValue'= numberSlopes$pvalue )
+
+knitr::kable(head(numberSlopes,10) )
+
+```
+
+# Obrigado!
